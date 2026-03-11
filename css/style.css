@@ -1,0 +1,678 @@
+/* =============================================
+   히트분양 - 메인 스타일시트
+   ============================================= */
+
+/* === Reset & Base === */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f5f6f8;
+    color: #333;
+    line-height: 1.6;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+/* === 헤더 === */
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.header-top {
+    background: #2c3e50;
+    color: #fff;
+    font-size: 12px;
+    padding: 6px 0;
+}
+
+.header-top-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-contact span {
+    margin-right: 16px;
+}
+
+.header-auth a {
+    color: #ccc;
+    margin-left: 12px;
+    font-size: 12px;
+}
+
+.header-auth a:hover {
+    color: #fff;
+}
+
+.header-main {
+    padding: 0;
+}
+
+.header-main-inner {
+    display: flex;
+    align-items: center;
+    height: 60px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 800;
+    margin-right: 40px;
+    flex-shrink: 0;
+}
+
+.logo-hit {
+    color: #e74c3c;
+}
+
+.logo-bunyang {
+    color: #2c3e50;
+}
+
+.nav {
+    display: flex;
+    gap: 0;
+    flex: 1;
+}
+
+.nav-link {
+    padding: 18px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #555;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: #e74c3c;
+    border-bottom-color: #e74c3c;
+}
+
+.mobile-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+/* === AD 슬라이더 === */
+.ad-slider {
+    background: #fff;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    overflow: hidden;
+}
+
+.slider-track {
+    display: flex;
+    transition: transform 0.4s ease;
+    gap: 12px;
+}
+
+.ad-item {
+    min-width: 100%;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ad-item:nth-child(2n) {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.ad-item:nth-child(3n) {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.ad-item:nth-child(4n) {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.ad-badge {
+    background: rgba(255,255,255,0.25);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.ad-text {
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ad-sub {
+    font-size: 12px;
+    opacity: 0.85;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.9);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    z-index: 10;
+}
+
+.slider-btn.prev { left: 20px; }
+.slider-btn.next { right: 20px; }
+
+.slider-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.slider-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ccc;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.slider-dot.active {
+    background: #e74c3c;
+}
+
+/* === 섹션 공통 === */
+.section {
+    padding: 32px 0;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #2c3e50;
+}
+
+.section-desc {
+    font-size: 12px;
+    color: #999;
+    margin-top: 4px;
+}
+
+.more-link {
+    font-size: 14px;
+    color: #e74c3c;
+    font-weight: 600;
+}
+
+/* === 베스트 현장 === */
+.best-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.best-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    border: 2px solid transparent;
+    transition: all 0.3s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.best-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #e74c3c, #f39c12);
+}
+
+.best-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    border-color: #e74c3c;
+}
+
+.best-card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.best-card-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.best-card-company {
+    font-size: 12px;
+    color: #888;
+    margin-top: 8px;
+}
+
+/* === 통계 === */
+.stats-section {
+    padding: 24px 0;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.stat-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.stat-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: #e74c3c;
+}
+
+.stat-sub {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 4px;
+}
+
+/* === 구인공고 그리드 === */
+.jobs-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.job-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 18px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+    border-left: 4px solid #e0e0e0;
+    transition: all 0.2s;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.job-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.job-card[data-grade="ad"] { border-left-color: #e74c3c; }
+.job-card[data-grade="premium"] { border-left-color: #f39c12; }
+.job-card[data-grade="superior"] { border-left-color: #3498db; }
+.job-card[data-grade="basic"] { border-left-color: #27ae60; }
+
+.job-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.job-card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #2c3e50;
+    line-height: 1.4;
+    flex: 1;
+}
+
+.job-tags {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.6;
+}
+
+.tag-new { background: #e8f5e9; color: #2e7d32; }
+.tag-hot { background: #fff3e0; color: #e65100; }
+.tag-urgent { background: #ffebee; color: #c62828; }
+.tag-jackpot { background: #fce4ec; color: #ad1457; }
+.tag-discount { background: #e3f2fd; color: #1565c0; }
+.tag-few { background: #f3e5f5; color: #7b1fa2; }
+
+.tag-grade {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 800;
+}
+.tag-grade-ad { background: #e74c3c; color: #fff; }
+.tag-grade-premium { background: #f39c12; color: #fff; }
+.tag-grade-superior { background: #3498db; color: #fff; }
+.tag-grade-basic { background: #27ae60; color: #fff; }
+
+.job-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 12px;
+}
+
+.meta-badge {
+    background: #f0f2f5;
+    padding: 3px 8px;
+    border-radius: 4px;
+    color: #555;
+    font-weight: 500;
+}
+
+.meta-badge.highlight {
+    background: #fff0f0;
+    color: #e74c3c;
+    font-weight: 700;
+}
+
+.job-card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #999;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 8px;
+}
+
+.job-card-company {
+    font-weight: 600;
+    color: #666;
+}
+
+/* === 맞춤현장 배너 === */
+.custom-banner-card {
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    border-radius: 12px;
+    padding: 30px;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.custom-banner-text p:first-child {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.custom-banner-text p:last-child {
+    font-size: 13px;
+    opacity: 0.85;
+}
+
+/* === 버튼 === */
+.btn {
+    display: inline-block;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: #e74c3c;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #c0392b;
+}
+
+/* === 뉴스/공지 === */
+.news-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.news-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.news-card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.notice-list {
+    list-style: none;
+}
+
+.notice-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid #f8f8f8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+}
+
+.notice-list li:last-child {
+    border-bottom: none;
+}
+
+.notice-cat {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-right: 8px;
+    background: #f0f2f5;
+    color: #555;
+}
+
+.notice-date {
+    color: #bbb;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+/* === 고객센터 === */
+.cs-section {
+    padding: 24px 0;
+}
+
+.cs-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.cs-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.cs-phone {
+    font-size: 28px;
+    font-weight: 800;
+    color: #e74c3c;
+    margin-bottom: 8px;
+}
+
+/* === 푸터 === */
+.footer {
+    background: #2c3e50;
+    color: #aaa;
+    padding: 30px 0;
+    font-size: 13px;
+}
+
+.footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.footer-logo {
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.footer-info p {
+    margin-bottom: 4px;
+}
+
+.footer-links {
+    display: flex;
+    gap: 16px;
+}
+
+.footer-links a {
+    color: #ccc;
+}
+
+.footer-links a:hover {
+    color: #fff;
+}
+
+/* === 반응형 === */
+@media (max-width: 768px) {
+    .nav { display: none; }
+    .mobile-toggle { display: block; }
+    
+    .nav.open {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background: #fff;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        z-index: 999;
+    }
+
+    .nav.open .nav-link {
+        padding: 14px 20px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .header-top { display: none; }
+
+    .best-grid { grid-template-columns: 1fr; }
+    .jobs-grid { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: 1fr; }
+    .news-grid { grid-template-columns: 1fr; }
+
+    .custom-banner-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+    }
+
+    .footer-inner {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .ad-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo { font-size: 20px; }
+    .section-header h2 { font-size: 17px; }
+    .job-card { padding: 14px; }
+}
