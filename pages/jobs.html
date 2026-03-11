@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>구인공고 - 히트분양</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .filter-bar {
+            background: #fff;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .filter-bar select, .filter-bar input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: inherit;
+        }
+        .filter-bar input { flex: 1; min-width: 200px; }
+        .filter-bar button {
+            padding: 8px 20px;
+            background: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .grade-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .grade-tab {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            background: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .grade-tab.active, .grade-tab:hover {
+            background: #e74c3c;
+            color: #fff;
+            border-color: #e74c3c;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 30px;
+        }
+        .page-btn {
+            width: 36px; height: 36px;
+            border: 1px solid #ddd;
+            background: #fff;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .page-btn.active {
+            background: #e74c3c;
+            color: #fff;
+            border-color: #e74c3c;
+        }
+        .job-write-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 14px 24px;
+            background: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(231,76,60,0.4);
+            z-index: 100;
+            font-family: inherit;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 헤더 (메인과 동일) -->
+<header class="header">
+    <div class="header-top">
+        <div class="container">
+            <div class="header-top-inner">
+                <div class="header-contact">
+                    <span>📞 1660-XXXX</span>
+                </div>
+                <div class="header-auth" id="headerAuth">
+                    <a href="login.html">로그인</a>
+                    <a href="login.html#signup">회원가입</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header-main">
+        <div class="container">
+            <div class="header-main-inner">
+                <a href="../index.html" class="logo">
+                    <span class="logo-hit">히트</span><span class="logo-bunyang">분양</span>
+                </a>
+                <nav class="nav" id="mainNav">
+                    <a href="../index.html" class="nav-link">홈</a>
+                    <a href="jobs.html" class="nav-link active">구인공고</a>
+                    <a href="complexes.html" class="nav-link">분양단지</a>
+                    <a href="#" class="nav-link">히트맵</a>
+                    <a href="#" class="nav-link">커뮤니티</a>
+                </nav>
+                <button class="mobile-toggle" onclick="toggleMenu()">☰</button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="section">
+    <div class="container">
+        <h1 style="font-size:24px; font-weight:800; margin-bottom:20px;">💼 구인공고</h1>
+
+        <!-- 필터 -->
+        <div class="filter-bar">
+            <select id="filterSido">
+                <option value="">전체 지역</option>
+                <option>서울</option><option>경기</option><option>인천</option>
+                <option>부산</option><option>대구</option><option>광주</option>
+                <option>대전</option><option>울산</option><option>세종</option>
+                <option>강원</option><option>충북</option><option>충남</option>
+                <option>전북</option><option>전남</option><option>경북</option>
+                <option>경남</option><option>제주</option>
+            </select>
+            <select id="filterType">
+                <option value="">전체 유형</option>
+                <option>아파트</option><option>오피스텔</option><option>상가</option>
+                <option>지식산업센터</option><option>생활숙박</option>
+            </select>
+            <select id="filterPosition">
+                <option value="">전체 직급</option>
+                <option>본부/팀장</option><option>팀장/팀원</option>
+                <option>팀원</option><option>분양대행</option>
+            </select>
+            <input type="text" id="filterSearch" placeholder="현장명, 지역, 회사명 검색...">
+            <button onclick="applyFilter()">검색</button>
+        </div>
+
+        <!-- 등급 탭 -->
+        <div class="grade-tabs">
+            <button class="grade-tab active" data-grade="" onclick="filterGrade(this)">전체</button>
+            <button class="grade-tab" data-grade="ad" onclick="filterGrade(this)">AD</button>
+            <button class="grade-tab" data-grade="premium" onclick="filterGrade(this)">★ 프리미엄</button>
+            <button class="grade-tab" data-grade="superior" onclick="filterGrade(this)">◆ 슈페리어</button>
+            <button class="grade-tab" data-grade="basic" onclick="filterGrade(this)">◎ 베이직</button>
+            <button class="grade-tab" data-grade="normal" onclick="filterGrade(this)">일반</button>
+        </div>
+
+        <!-- 공고 목록 -->
+        <div class="jobs-grid" id="allJobs"></div>
+
+        <!-- 페이지네이션 -->
+        <div class="pagination" id="pagination"></div>
+    </div>
+</main>
+
+<!-- 글쓰기 버튼 -->
+<button class="job-write-btn" onclick="location.href='job-write.html'">✏️ 공고 등록</button>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-inner">
+            <div class="footer-logo">
+                <span class="logo-hit">히트</span><span class="logo-bunyang">분양</span>
+            </div>
+            <div class="footer-info">
+                <p>© 2025 히트분양. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="../js/config.js"></script>
+<script>
+    // 전역 변수
+    let currentPage = 1;
+    const pageSize = 20;
+    let currentGrade = '';
+    let allJobsData = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+        applyFilter();
+    });
+
+    async function applyFilter() {
+        currentPage = 1;
+        await loadAllJobs();
+    }
+
+    async function loadAllJobs() {
+        let query = supabase
+            .from('job_posts')
+            .select('*', { count: 'exact' })
+            .eq('status', 'active');
+
+        // 등급 필터
+        if (currentGrade) {
+            query = query.eq('ad_grade', currentGrade);
+        }
+
+        // 지역 필터
+        const sido = document.getElementById('filterSido').value;
+        if (sido) query = query.eq('location_sido', sido);
+
+        // 유형 필터
+        const type = document.getElementById('filterType').value;
+        if (type) query = query.eq('property_type', type);
+
+        // 직급 필터
+        const position = document.getElementById('filterPosition').value;
+        if (position) query = query.eq('recruit_position', position);
+
+        // 검색어
+        const search = document.getElementById('filterSearch').value.trim();
+        if (search) {
+            query = query.or(`title.ilike.%${search}%,site_name.ilike.%${search}%,company.ilike.%${search}%,location_address.ilike.%${search}%`);
+        }
+
+        // 정렬: AD등급 우선 → 최신순
+        query = query
+            .order('created_at', { ascending: false })
+            .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
+
+        const { data, count, error } = await query;
+
+        if (error) {
+            console.error(error);
+            return;
+        }
+
+        // 등급 우선 정렬
+        const gradeOrder = { ad: 0, premium: 1, superior: 2, basic: 3, normal: 4 };
+        data.sort((a, b) => (gradeOrder[a.ad_grade] || 4) - (gradeOrder[b.ad_grade] || 4));
+
+        document.getElementById('allJobs').innerHTML = data.length > 0
+            ? data.map(renderJobCard).join('')
+            : '<p style="text-align:center;color:#999;padding:40px;">등록된 공고가 없습니다.</p>';
+
+        renderPagination(count);
+    }
+
+    function renderJobCard(job) {
+        const gradeLabels = {
+            ad: 'AD', premium: '프리미엄', superior: '슈페리어', basic: '베이직', normal: ''
+        };
+        let tags = '';
+        if (job.is_new) tags += '<span class="tag tag-new">신규</span>';
+        if (job.is_hot) tags += '<span class="tag tag-hot">HOT</span>';
+        if (job.is_urgent) tags += '<span class="tag tag-urgent">급구</span>';
+        if (job.is_jackpot) tags += '<span class="tag tag-jackpot">대박</span>';
+        if (job.is_discount) tags += '<span class="tag tag-discount">할인</span>';
+        if (job.is_few) tags += '<span class="tag tag-few">소수</span>';
+
+        return `
+            <div class="job-card" data-grade="${job.ad_grade}" onclick="location.href='job-detail.html?id=${job.id}'">
+                <div class="job-card-header">
+                    <div class="job-tags">
+                        ${job.ad_grade !== 'normal' ? `<span class="tag tag-grade tag-grade-${job.ad_grade}">${gradeLabels[job.ad_grade]}</span>` : ''}
+                        ${tags}
+                    </div>
+                </div>
+                <div class="job-card-title">${esc(job.title)}</div>
+                <div class="job-card-meta">
+                    <span class="meta-badge">${esc(job.recruit_position)}</span>
+                    <span class="meta-badge highlight">${esc(job.commission_type)}</span>
+                    ${job.commission_rate ? `<span class="meta-badge highlight">${esc(job.commission_rate)}</span>` : ''}
+                    ${job.daily_pay ? `<span class="meta-badge">일비 ${esc(job.daily_pay)}</span>` : ''}
+                    ${job.dormitory_pay ? `<span class="meta-badge">숙소비 ${esc(job.dormitory_pay)}</span>` : ''}
+                    <span class="meta-badge">${esc(job.experience)}</span>
+                </div>
+                <div class="job-card-bottom">
+                    <span class="job-card-company">${esc(job.company || '')}</span>
+                    <span>${esc(job.location_sido)} ${esc(job.location_sigungu || '')}</span>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderPagination(totalCount) {
+        const totalPages = Math.ceil(totalCount / pageSize);
+        const el = document.getElementById('pagination');
+
+        let html = '';
+        for (let i = 1; i <= totalPages; i++) {
+            html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goPage(${i})">${i}</button>`;
+        }
+        el.innerHTML = html;
+    }
+
+    function goPage(page) {
+        currentPage = page;
+        loadAllJobs();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function filterGrade(btn) {
+        document.querySelectorAll('.grade-tab').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+        currentGrade = btn.dataset.grade;
+        currentPage = 1;
+        loadAllJobs();
+    }
+
+    function esc(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    function toggleMenu() {
+        document.getElementById('mainNav').classList.toggle('open');
+    }
+</script>
+</body>
+</html>
