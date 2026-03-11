@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>히트분양 - 대한민국 NO.1 분양 구인구직 플랫폼</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<!-- ======= 헤더 ======= -->
+<header class="header">
+    <div class="header-top">
+        <div class="container">
+            <div class="header-top-inner">
+                <div class="header-contact">
+                    <span>📞 1660-XXXX</span>
+                    <span>운영시간: 월~금 09:00~18:00</span>
+                </div>
+                <div class="header-auth" id="headerAuth">
+                    <a href="pages/login.html">로그인</a>
+                    <a href="pages/login.html#signup">회원가입</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header-main">
+        <div class="container">
+            <div class="header-main-inner">
+                <a href="/" class="logo">
+                    <span class="logo-hit">히트</span><span class="logo-bunyang">분양</span>
+                </a>
+                <nav class="nav" id="mainNav">
+                    <a href="/" class="nav-link active">홈</a>
+                    <a href="pages/jobs.html" class="nav-link">구인공고</a>
+                    <a href="pages/complexes.html" class="nav-link">분양단지</a>
+                    <a href="#" class="nav-link">히트맵</a>
+                    <a href="#" class="nav-link">커뮤니티</a>
+                    <a href="#" class="nav-link">고객센터</a>
+                </nav>
+                <button class="mobile-toggle" onclick="toggleMenu()">☰</button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- ======= AD 슬라이더 ======= -->
+<section class="ad-slider" id="adSlider">
+    <div class="container">
+        <div class="slider-track" id="sliderTrack"></div>
+        <button class="slider-btn prev" onclick="slideAd(-1)">‹</button>
+        <button class="slider-btn next" onclick="slideAd(1)">›</button>
+        <div class="slider-dots" id="sliderDots"></div>
+    </div>
+</section>
+
+<!-- ======= 베스트 현장 ======= -->
+<section class="section best-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>🏆 베스트 현장</h2>
+            <p class="section-desc">※ 최근 10일간 조회수, 문의, 공유 등 다양한 지표를 종합하여 자동 노출됩니다.</p>
+        </div>
+        <div class="best-grid" id="bestJobs"></div>
+    </div>
+</section>
+
+<!-- ======= 서포터즈 + 통계 ======= -->
+<section class="section stats-section">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">🏢</div>
+                <div class="stat-label">신규현장</div>
+                <div class="stat-value" id="statNew">0</div>
+                <div class="stat-sub">전체 현장 <span id="statTotal">0</span>개</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">👁️</div>
+                <div class="stat-label">실시간 방문자</div>
+                <div class="stat-value" id="statVisitors">0</div>
+                <div class="stat-sub">오늘 히트분양 방문자</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ======= 슈페리어 구인공고 ======= -->
+<section class="section jobs-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>◆ 슈페리어</h2>
+            <a href="pages/jobs.html" class="more-link">더보기 →</a>
+        </div>
+        <div class="jobs-grid" id="superiorJobs"></div>
+    </div>
+</section>
+
+<!-- ======= 맞춤현장 배너 ======= -->
+<section class="section custom-banner">
+    <div class="container">
+        <div class="custom-banner-card">
+            <div class="custom-banner-text">
+                <p>🔒 로그인 후 이용하실 수 있습니다.</p>
+                <p>맞춤현장 정보를 설정하시어 회원님께서 찾으시는 현장 구인 정보를 빠르게 전달 받아보세요!</p>
+            </div>
+            <a href="pages/login.html" class="btn btn-primary">로그인하기</a>
+        </div>
+    </div>
+</section>
+
+<!-- ======= 프리미엄 구인공고 ======= -->
+<section class="section jobs-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>★ 프리미엄</h2>
+            <a href="pages/jobs.html" class="more-link">더보기 →</a>
+        </div>
+        <div class="jobs-grid" id="premiumJobs"></div>
+    </div>
+</section>
+
+<!-- ======= 일반 구인공고 ======= -->
+<section class="section jobs-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>◎ 베이직 / 일반</h2>
+            <a href="pages/jobs.html" class="more-link">더보기 →</a>
+        </div>
+        <div class="jobs-grid" id="normalJobs"></div>
+    </div>
+</section>
+
+<!-- ======= 뉴스 & 공지 ======= -->
+<section class="section news-section">
+    <div class="container">
+        <div class="news-grid">
+            <div class="news-card">
+                <h3>📢 공지사항</h3>
+                <ul class="notice-list" id="noticeList"></ul>
+            </div>
+            <div class="news-card">
+                <h3>📰 히트분양 뉴스</h3>
+                <ul class="notice-list" id="newsList"></ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ======= 고객센터 ======= -->
+<section class="section cs-section">
+    <div class="container">
+        <div class="cs-card">
+            <h3>고객센터</h3>
+            <p class="cs-phone">📞 1660-XXXX</p>
+            <p>운영시간: 월~금 09:00~18:00 (주말/공휴일 휴무)</p>
+            <p>E-mail: help@hitbunyang.com</p>
+        </div>
+    </div>
+</section>
+
+<!-- ======= 푸터 ======= -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-inner">
+            <div class="footer-logo">
+                <span class="logo-hit">히트</span><span class="logo-bunyang">분양</span>
+            </div>
+            <div class="footer-info">
+                <p>히트분양 | 대표: OOO | 사업자등록번호: 000-00-00000</p>
+                <p>주소: 서울특별시 OO구 OO로 OO</p>
+                <p>© 2025 히트분양. All rights reserved.</p>
+            </div>
+            <div class="footer-links">
+                <a href="#">이용약관</a>
+                <a href="#">개인정보처리방침</a>
+                <a href="#">광고문의</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
