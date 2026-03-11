@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 - 히트분양</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .auth-container {
+            max-width: 420px; margin: 60px auto; padding: 0 16px;
+        }
+        .auth-card {
+            background: #fff; border-radius: 16px; padding: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .auth-card h2 {
+            font-size: 24px; font-weight: 800; text-align: center; margin-bottom: 30px;
+        }
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #555;
+        }
+        .form-group input, .form-group select {
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;
+            font-size: 14px; font-family: inherit;
+        }
+        .form-group input:focus {
+            outline: none; border-color: #e74c3c;
+        }
+        .auth-btn {
+            width: 100%; padding: 14px; background: #e74c3c; color: #fff; border: none;
+            border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer;
+            margin-top: 10px; font-family: inherit;
+        }
+        .auth-btn:hover { background: #c0392b; }
+        .auth-switch {
+            text-align: center; margin-top: 20px; font-size: 13px; color: #888;
+        }
+        .auth-switch a { color: #e74c3c; font-weight: 600; }
+        .auth-msg {
+            text-align: center; padding: 10px; border-radius: 8px; margin-bottom: 16px;
+            font-size: 13px; display: none;
+        }
+        .auth-msg.error { display: block; background: #ffebee; color: #c62828; }
+        .auth-msg.success { display: block; background: #e8f5e9; color: #2e7d32; }
+        .tab-btns { display: flex; margin-bottom: 24px; border-bottom: 2px solid #f0f0f0; }
+        .tab-btn {
+            flex: 1; padding: 12px; text-align: center; font-weight: 700; font-size: 15px;
+            cursor: pointer; border: none; background: none; color: #999;
+            border-bottom: 2px solid transparent; margin-bottom: -2px; font-family: inherit;
+        }
+        .tab-btn.active { color: #e74c3c; border-bottom-color: #e74c3c; }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-main">
+        <div class="container">
+            <div class="header-main-inner">
+                <a href="../index.html" class="logo">
+                    <span class="logo-hit">히트</span><span class="logo-bunyang">분양</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="tab-btns">
+            <button class="tab-btn active" onclick="showTab('login')">로그인</button>
+            <button class="tab-btn" onclick="showTab('signup')">회원가입</button>
+        </div>
+
+        <!-- 로그인 -->
+        <div id="loginForm">
+            <div class="auth-msg" id="loginMsg"></div>
+            <div class="form-group">
+                <label>이메일</label>
+                <input type="email" id="loginEmail" placeholder="이메일 주소 입력">
+            </div>
+            <div class="form-group">
+                <label>비밀번호</label>
+                <input type="password" id="loginPassword" placeholder="비밀번호 입력">
+            </div>
+            <button class="auth-btn" onclick="doLogin()">로그인</button>
+        </div>
+
+        <!-- 회원가입 -->
+        <div id="signupForm" style="display:none;">
+            <div class="auth-msg" id="signupMsg"></div>
+            <div class="form-group">
+                <label>이메일</label>
+                <input type="email" id="signupEmail" placeholder="이메일 주소 입력">
+            </div>
+            <div class="form-group">
+                <label>비밀번호</label>
+                <input type="password" id="signupPassword" placeholder="6자 이상 입력">
+            </div>
+            <div class="form-group">
+                <label>이름</label>
+                <input type="text" id="signupName" placeholder="이름 입력">
+            </div>
+            <div class="form-group">
+                <label>연락처</label>
+                <input type="tel" id="signupPhone" placeholder="010-0000-0000">
+            </div>
+            <div class="form-group">
+                <label>회원유형</label>
+                <select id="signupRole">
+                    <option value="agent">분양 업체 (구인)</option>
+                    <option value="user">구직자</option>
+                </select>
+            </div>
+            <button class="auth-btn" onclick="doSignup()">회원가입</button>
+        </div>
+    </div>
+</div>
+
+<script src="../js/config.js"></script>
+<script>
+    // 해시로 탭 전환
+    if (location.hash === '#signup') showTab('signup');
+
+    function showTab(tab) {
+        document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+        document.getElementById('signupForm').style.display = tab === 'signup' ? 'block' : 'none';
+        document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+            btn.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'signup'));
+        });
+    }
+
+    async function doLogin() {
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        const msgEl = document.getElementById('loginMsg');
+
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+        if (error) {
+            msgEl.className = 'auth-msg error';
+            msgEl.textContent = '로그인 실패: 이메일 또는 비밀번호를 확인하세요.';
+        } else {
+            msgEl.className = 'auth-msg success';
+            msgEl.textContent = '로그인 성공! 이동중...';
+            setTimeout(() => location.href = '../index.html', 1000);
+        }
+    }
+
+    async function doSignup() {
+        const email = document.getElementById('signupEmail').value;
+        const password = document.getElementById('signupPassword').value;
+        const name = document.getElementById('signupName').value;
+        const phone = document.getElementById('signupPhone').value;
+        const role = document.getElementById('signupRole').value;
+        const msgEl = document.getElementById('signupMsg');
+
+        if (!email || !password || !name) {
+            msgEl.className = 'auth-msg error';
+            msgEl.textContent = '필수 항목을 모두 입력해주세요.';
+            return;
+        }
+
+        const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                data: { name, phone, role }
+            }
+        });
+
+        if (error) {
+            msgEl.className = 'auth-msg error';
+            msgEl.textContent = '회원가입 실패: ' + error.message;
+        } else {
+            // 프로필 테이블에도 저장
+            if (data.user) {
+                await supabase.from('profiles').insert({
+                    id: data.user.id,
+                    email,
+                    name,
+                    phone,
+                    role
+                });
+            }
+            msgEl.className = 'auth-msg success';
+            msgEl.textContent = '회원가입 성공! 이메일 인증 후 로그인해주세요.';
+        }
+    }
+</script>
+</body>
+</html>
