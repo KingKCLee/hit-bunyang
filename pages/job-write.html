@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공고 등록 - 히트분양</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .write-container { max-width: 700px; margin: 40px auto; padding: 0 16px; }
+        .write-card {
+            background: #fff; border-radius: 16px; padding: 36px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .write-card h2 { font-size: 22px; font-weight: 800; margin-bottom: 28px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #555;
+        }
+        .form-group label .req { color: #e74c3c; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px;
+            font-size: 14px; font-family: inherit;
+        }
+        .form-group textarea { resize: vertical; min-height: 120px; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none; border-color: #e74c3c;
+        }
+        .checkbox-group { display: flex; gap: 16px; flex-wrap: wrap; }
+        .checkbox-group label { display: flex; align-items: center; gap: 4px; font-size: 13px; cursor: pointer; }
+        .submit-btn {
+            width: 100%; padding: 14px; background: #e74c3c; color: #fff; border: none;
+            border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer;
+            margin-top: 20px; font-family: inherit;
+        }
+        .submit-btn:hover { background: #c0392b; }
+        .msg { text-align: center; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; display: none; }
+        .msg.error { display: block; background: #ffebee; color: #c62828; }
+        .msg.success { display: block; background: #e8f5e9; color: #2e7d32; }
+        @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-main">
+        <div class="container">
+            <div class="header-main-inner">
+                <a href="../index.html" class="logo">
+                    <span class="logo-hit">히트</span><span class="logo-bunyang">분양</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="write-container">
+    <div class="write-card">
+        <h2>✏️ 구인공고 등록</h2>
+        <div class="msg" id="writeMsg"></div>
+
+        <div class="form-group">
+            <label>공고 제목 <span class="req">*</span></label>
+            <input type="text" id="wTitle" placeholder="예: 힐스테이트 안양 펠루스 팀장/팀원 모집">
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>현장명 <span class="req">*</span></label>
+                <input type="text" id="wSiteName" placeholder="예: 힐스테이트 안양 펠루스">
+            </div>
+            <div class="form-group">
+                <label>분양유형</label>
+                <select id="wPropertyType">
+                    <option>아파트</option><option>오피스텔</option><option>상가</option>
+                    <option>지식산업센터</option><option>생활숙박</option><option>타운하우스</option><option>기타</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>시/도 <span class="req">*</span></label>
+                <select id="wSido">
+                    <option>서울</option><option>경기</option><option>인천</option>
+                    <option>부산</option><option>대구</option><option>광주</option>
+                    <option>대전</option><option>울산</option><option>세종</option>
+                    <option>강원</option><option>충북</option><option>충남</option>
+                    <option>전북</option><option>전남</option><option>경북</option>
+                    <option>경남</option><option>제주</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>시/군/구</label>
+                <input type="text" id="wSigungu" placeholder="예: 안양시">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>상세 주소</label>
+            <input type="text" id="wAddress" placeholder="상세 주소 입력">
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>모집직급</label>
+                <select id="wPosition">
+                    <option>팀장/팀원</option><option>본부/팀장</option>
+                    <option>팀원</option><option>분양대행</option><option>기타</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>경력조건</label>
+                <select id="wExperience">
+                    <option>경력무관</option><option>1개월이상</option>
+                    <option>6개월이상</option><option>1년이상</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>수수료</label>
+                <input type="text" id="wCommission" placeholder="예: 팀 2,300만원">
+            </div>
+            <div class="form-group">
+                <label>일비</label>
+                <input type="text" id="wDailyPay" placeholder="예: 50,000원">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>숙소비</label>
+            <input type="text" id="wDormPay" placeholder="예: 30,000원">
+        </div>
+
+        <div class="form-group">
+            <label>상세 내용</label>
+            <textarea id="wDescription" placeholder="현장 소개, 수수료 상세, 지원사항 등을 자유롭게 작성해주세요."></textarea>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>담당자명</label>
+                <input type="text" id="wContactName" placeholder="담당자 이름">
+            </div>
+            <div class="form-group">
+                <label>연락처</label>
+                <input type="tel" id="wContactPhone" placeholder="010-0000-0000">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>대행사(회사명)</label>
+            <input type="text" id="wCompany" placeholder="회사명 입력">
+        </div>
+
+        <div class="form-group">
+            <label>태그</label>
+            <div class="checkbox-group">
+                <label><input type="checkbox" id="tagNew" checked> 신규</label>
+                <label><input type="checkbox" id="tagHot"> HOT</label>
+                <label><input type="checkbox" id="tagUrgent"> 급구</label>
+                <label><input type="checkbox" id="tagJackpot"> 대박</label>
+            </div>
+        </div>
+
+        <button class="submit-btn" onclick="submitJob()">공고 등록하기</button>
+    </div>
+</div>
+
+<script src="../js/config.js"></script>
+<script>
+    // 로그인 체크
+    document.addEventListener('DOMContentLoaded', async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            alert('로그인이 필요합니다.');
+            location.href = 'login.html';
+        }
+    });
+
+    async function submitJob() {
+        const msgEl = document.getElementById('writeMsg');
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (!user) {
+            msgEl.className = 'msg error';
+            msgEl.textContent = '로그인이 필요합니다.';
+            return;
+        }
+
+        const title = document.getElementById('wTitle').value.trim();
+        const siteName = document.getElementById('wSiteName').value.trim();
+        const sido = document.getElementById('wSido').value;
+
+        if (!title || !siteName) {
+            msgEl.className = 'msg error';
+            msgEl.textContent = '제목과 현장명은 필수 입력입니다.';
+            return;
+        }
+
+        const jobData = {
+            user_id: user.id,
+            title: title,
+            site_name: siteName,
+            location_sido: sido,
+            location_sigungu: document.getElementById('wSigungu').value.trim(),
+            location_address: document.getElementById('wAddress').value.trim(),
+            property_type: document.getElementById('wPropertyType').value,
+            recruit_position: document.getElementById('wPosition').value,
+            experience: document.getElementById('wExperience').value,
+            commission_type: '계약 수수료',
+            commission_rate: document.getElementById('wCommission').value.trim(),
+            daily_pay: document.getElementById('wDailyPay').value.trim() || null,
+            dormitory_pay: document.getElementById('wDormPay').value.trim() || null,
+            description: document.getElementById('wDescription').value.trim(),
+            contact_name: document.getElementById('wContactName').value.trim(),
+            contact_phone: document.getElementById('wContactPhone').value.trim(),
+            company: document.getElementById('wCompany').value.trim(),
+            is_new: document.getElementById('tagNew').checked,
+            is_hot: document.getElementById('tagHot').checked,
+            is_urgent: document.getElementById('tagUrgent').checked,
+            is_jackpot: document.getElementById('tagJackpot').checked,
+            ad_grade: 'normal',
+            status: 'pending'
+        };
+
+        const { data, error } = await supabase.from('job_posts').insert(jobData);
+
+        if (error) {
+            msgEl.className = 'msg error';
+            msgEl.textContent = '등록 실패: ' + error.message;
+        } else {
+            msgEl.className = 'msg success';
+            msgEl.textContent = '공고가 등록되었습니다! 관리자 승인 후 노출됩니다.';
+            setTimeout(() => location.href = 'jobs.html', 2000);
+        }
+    }
+</script>
+</body>
+</html>
